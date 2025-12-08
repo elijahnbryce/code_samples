@@ -87,10 +87,10 @@
 
 Here's a blank template to get started. To avoid retyping too much info, do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`, `project_license`
 
-  <a href="https://github.com/elijahnbryce/code_samples">Dialogue System</a>
-  <a href="https://github.com/elijahnbryce/code_samples">Platformer Controllers</a>
-  <a href="https://github.com/elijahnbryce/code_samples">Game Manager</a>
-  <a href="https://github.com/elijahnbryce/code_samples">Sticker Animation</a>
+  <a href="https://github.com/elijahnbryce/code_samples/tree/main/Storyboard%20Game">Dialogue System</a>
+  <a href="https://github.com/elijahnbryce/code_samples/tree/main/Puzzle%20Platform%20Controller">Platformer Controllers</a>
+  <a href="https://github.com/elijahnbryce/code_samples/blob/main/Maze%20Game/GameManager.cs">Game Manager</a>
+  <a href="https://github.com/elijahnbryce/code_samples/blob/main/Sticker.cs">Sticker Animation</a>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
