@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,17 +17,17 @@ public class GameManager : MonoBehaviour
     public int mazesDone = 0;
 
     [Header("Components")]
-    [SerializeField] private TransitionManager tm;
+    [SerializeField] private TransitionManager transitionManager;
     public Transform playerRef;
 
     [Header("Music")]
     [SerializeField] private Transform musicHolder;
-    private List<AudioSource> musiq = new List<AudioSource>();
+    private List<AudioSource> musicSrc = new List<AudioSource>();
     public int musinx;
 
     private void Awake()
     {
-        //Debug.Log(mazesDone + " Game Manager awake: " + gameObject);
+        // Set up Singleton
         if (null == _Instance && _Instance != this)
         {
             Debug.Log("ASSIGNING GAMEMANAGER: " + gameObject);
@@ -53,21 +52,25 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        // TransitionManager to play scene swap animations
         //tm = GetComponentInChildren<TransitionManager>();
-        Debug.Log(tm?.gameObject.name);
 
         closedMazes.Clear();
         mazesDone = closedMazes.Count;
 
         foreach (AudioSource src in musicHolder.GetComponents<AudioSource>())
         {
-            musiq.Add(src);
+            musicSrc.Add(src);
         }
         StartMusic();
     }
 
     void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode)
     {
+        // The Main Scene is the forest level
+        // We need to the gates to remember their completion status
+        // This behavior only happens for the forest, not when we enter a maze level
+
         if (scene.buildIndex == mainScene)
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -75,6 +78,8 @@ public class GameManager : MonoBehaviour
             RestoreGateState(scene);
             StartMusic();
         }
+
+        // Loading a maze level where we need a cursor
         else
         {
             Cursor.lockState = CursorLockMode.Confined;
@@ -84,11 +89,13 @@ public class GameManager : MonoBehaviour
 
     private void StartMusic()
     {
-        if (0 >= musiq.Count) return;
-        musinx = mazesDone;
-        if (musiq.Count <= musinx) musinx = musiq.Count - 1;
+        // Plays music based on levels completed
 
-        AudioSource bgm = musiq[musinx];
+        if (0 >= musicSrc.Count) return;
+        musinx = mazesDone;
+        if (musicSrc.Count <= musinx) musinx = musicSrc.Count - 1;
+
+        AudioSource bgm = musicSrc[musinx];
         if (bgm != null && !bgm.isPlaying) 
         {
             bgm.Play();
@@ -97,36 +104,51 @@ public class GameManager : MonoBehaviour
 
     private void RestoreGateState(Scene scene)
     {
+        // We need to place the player in the correct world position
+        // We also need to play the scene transtion animation
+        // If we don't have a reference to a last gate then we're at the start
         if (!lastGate) return;
 
         StartCoroutine(UpdatePlayer());
-        if (tm != null) StartCoroutine(UpdateTM());
+        if (transitionManager != null) StartCoroutine(UpdateTM());
     }
 
     private IEnumerator UpdatePlayer()
     {
+        // Ensure we have reference to the player in scene
+
         yield return new WaitWhile(()=> null == playerRef);
         PlayerExitGate(playerRef, lastGate.exit);
     }
 
     private IEnumerator UpdateTM()
     {
-        tm.gameObject.SetActive(false);
-        yield return new WaitUntil( ()=> tm.gameObject.activeSelf == false);
+        // Hacky fix for resetting transition canvas 
+        // When the Forest scene is loaded again the 
+        // canvas appears full black over the scene
+        // in editor this behavior can be remedied 
+        // by disabling and enabling the canvas
+        transitionManager.gameObject.SetActive(false);
+        yield return new WaitUntil( ()=> transitionManager.gameObject.activeSelf == false);
 
-        tm.gameObject.SetActive(true);
-        yield return new WaitUntil( ()=> tm.gameObject.activeSelf == true);
+        transitionManager.gameObject.SetActive(true);
+        yield return new WaitUntil( ()=> transitionManager.gameObject.activeSelf == true);
 
-        tm.PlayTransition(false, CompleteMaze);
+        transitionManager.PlayTransition(false, CompleteMaze);
     }
 
     private void PlayerExitGate(Transform p, Transform t)
     {
+        // Move player to the exit position of a gate
         p.GetComponent<Rigidbody>().position = t.position;
     }
 
     public void SetGate(GateBehavior gba, Transform player = null)
     {
+        // If a player walks through a gate they should either: 
+        // 1. Start maze (maze incomplete)
+        // 2. Traverse through (complete)
+
         if (!closedMazes.Contains(gba.mazelink))
         {
             lastGate = gba;
@@ -137,23 +159,31 @@ public class GameManager : MonoBehaviour
 
     public void EnterMaze(string lvl = "Maze_1")
     {
-        //LoadMaze(lvl);
-        tm.PlayTransition(true, LoadMaze, lvl);
+        // Transition Manager plays animation and call LoadMaze
+        transitionManager.PlayTransition(true, LoadMaze, lvl);
     }
 
     private void LoadMaze(string lvl)
     {
+        // We moved the Manager into the scene on load
+        // move it bck to don't destroy when we leave
+
         DontDestroyOnLoad(gameObject);
         StartCoroutine(LoadMazeAsync(lvl));
     }
 
     private IEnumerator LoadMazeAsync(string lvl)
     {
+        // We need to stop the audio source as 
+        // it is carried by this manager
+        // The TransitionManager also has DOTweens
+        // to this gameobject and must be released
+
         AsyncOperation a = SceneManager.LoadSceneAsync(lvl, LoadSceneMode.Single);
-        musiq[musinx].Stop();
+        musicSrc[musinx].Stop();
 
         while (!a.isDone) yield return null;
-        //tm.Free();
+        tm.Free();
     }
 
     public void ExitMaze(string sceneName = null)
@@ -163,27 +193,28 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator ExitMazeAsync(string sceneName)
     {
+        // Handle End Scene BuildIndex
+
         int nextScene = SceneManager.GetSceneByName(sceneName).buildIndex;
         nextScene = (-1 == nextScene) ? 1 : nextScene;
         AsyncOperation a = SceneManager.LoadSceneAsync(nextScene, LoadSceneMode.Single);
 
         while (!a.isDone) yield return null;
-        //tm.gameObject.SetActive(true);
+        tm.gameObject.SetActive(true);
     }
 
     private void CompleteMaze(string s = null)
     {
-        Debug.Log(s + " Completed Maze: " + lastGate);
+        // Move maze to closed list
 
         closedMazes.Add(lastGate.mazelink);
         mazesDone++;
-
-        Debug.Log(mazesDone);
     }
 
     public void Kill()
     {
-        Debug.Log("GameOver");
+        // Clear singleton and unload level
+
         Time.timeScale = 0;
         _Instance = null;
 

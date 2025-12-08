@@ -21,12 +21,14 @@ public class DialogueAnim : MonoBehaviour
 
     private void Start()
     {
-        // store for later
+        // Setup Tweens for continuous reuse
         _length = Mathf.Max(_duration, (_duration * _rotMod));
 
         slam = ConfigTween(targ.transform.DOPunchScale(_scale, _duration).SetEase(Ease.OutElastic));
         shake = ConfigTween(targ.transform.DOPunchRotation(_rot, _duration * _rotMod).SetEase(Ease.InOutBounce));
 
+        // Self-contain the tween's handling
+        // Set self inactive for task control 
         plop = DOTween.Sequence().Pause().SetAutoKill(false).SetLink(targ.gameObject, LinkBehaviour.KillOnDestroy)
             .Insert(0, shake)
             .Insert(0, slam)
@@ -37,6 +39,10 @@ public class DialogueAnim : MonoBehaviour
 
     private Tween ConfigTween(Tween t)
     {
+        // We're configuring the tweens on start but
+        // we don't want to play until we call them 
+        // also link them to their respective objects
+        // because want them to be destroyed together
         t
             .Pause()
             .SetAutoKill(false)
@@ -45,23 +51,19 @@ public class DialogueAnim : MonoBehaviour
         return t ;
     }
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            ShowUp(diag);
-        }
-    }
-
     public IEnumerator Play(string s)
     {
+        // Control dialogue visuals
         toSay = s;
-        ShowUp(diag) ;
+        ShowUp(diag);
         yield return StartCoroutine(CloseWhenDone());
     }
 
     private void ShowUp(bool b)
     {
+        // Toggle the Dialogue Box
+        // Restart on Open 
+        // Rewind on Close
         if (!b) 
         { 
             targ.gameObject.SetActive(!b);  
@@ -76,6 +78,7 @@ public class DialogueAnim : MonoBehaviour
 
     private IEnumerator CloseWhenDone()
     {
+        // Show full message then close
         yield return StartCoroutine(textFX.ShowDialogue(toSay));
         ShowUp(diag);
         yield return new WaitUntil(() => !diag);

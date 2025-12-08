@@ -9,7 +9,7 @@ public class Panel : ScriptableObject
     [System.Serializable]
     public struct PuzzlingConversation
     {
-        // break sequences of conversations that have minigame afterwards
+        // separate sequences of conversations that have minigame afterwards
         public List<Dialogue> dialogue;
         public bool spawnsPuzzle;
     }

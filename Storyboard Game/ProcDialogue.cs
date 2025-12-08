@@ -13,10 +13,10 @@ public class ProcDialogue : MonoBehaviour
     [SerializeField] private KeyCode diagButton = KeyCode.Space;
     private float resetSpeed, count;
 
+    // This action holds method for speeding up text
     private delegate void IDiagAction();
     private IDiagAction _action;
 
-    // Start is called before the first frame update
     private void OnEnable()
     {
         resetSpeed = speed;
@@ -46,7 +46,8 @@ public class ProcDialogue : MonoBehaviour
 
     private void SkipDiag()
     {
-        //resetSpeed = speed;
+        // This prevents invoking more 
+        // than once for same dialogue
         speed = 1;
         _action = null;
     }
@@ -65,7 +66,9 @@ public class ProcDialogue : MonoBehaviour
             count++;
             if (count > maxDiag && (char)32 == c)
             {
-                yield return StartCoroutine(LoadNextDiag()); // new daig page
+                // wait for continue input if 
+                // message fills multiple pages
+                yield return StartCoroutine(LoadNextDiag());
             }
             text.text += c;
             yield return new WaitForSeconds(1-speed);
@@ -76,7 +79,7 @@ public class ProcDialogue : MonoBehaviour
     private IEnumerator LoadNextDiag() 
     { 
         indicator.SetActive(true);
-        // play indicator animation
+        // play indicator animation and wait for continue input
         yield return new WaitUntil( ()=> Input.GetKeyDown(diagButton) );
         Clear();
     }

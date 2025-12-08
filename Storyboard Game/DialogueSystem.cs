@@ -7,9 +7,7 @@ public class DialogueSystem : MonoBehaviour
 {
     public static DialogueSystem _Instance;
 
-    [SerializeField] private DialogueAnim paw;
-    [SerializeField] private DialogueAnim bun;
-    [SerializeField] private DialogueAnim poe;
+    [SerializeField] private DialogueAnim alpha, bravo, charlie;
     [SerializeField] private float speechInterval = 1f;
 
     private List<IEnumerator> queue = new List<IEnumerator>();
@@ -21,8 +19,22 @@ public class DialogueSystem : MonoBehaviour
         else Destroy(gameObject);
     }
 
+    private IEnumerator Play()
+    {
+        // Custom Update Task for Dequeueing Messages 
+        // Run when when empty queue recieves an enqueue 
+        // Stops when queue is empty
+        while (queue.Count > 0){
+            yield return StartCoroutine(queue[0]);
+            queue.RemoveAt(0);
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
     public void EnqueDiag(IEnumerator routine)
     {
+        // Handle logic for for custome update Task 
+        // If queue empty, start a new Play of queue
         if (queue.Count == 0)
         {
             queue.Add(routine);
@@ -31,38 +43,31 @@ public class DialogueSystem : MonoBehaviour
         else queue.Add(routine);
     }
 
+    public IEnumerator CustomSay(string s, DialogueAnim custom)
+    {
+        // These routines go in the queue.
+        // Returns from DialogueAnim after 
+        // full message shown and textbox closed
+        yield return StartCoroutine(custom.Play(s));
+        yield return new WaitForSeconds(speechInterval);
+    }
+
     public IEnumerator PawSay(string s)
     {
-        yield return StartCoroutine(paw.Play(s));
+        yield return StartCoroutine(bravo.Play(s));
         yield return new WaitForSeconds(speechInterval);
     }
 
     public IEnumerator BunSay(string s)
     {
-        yield return StartCoroutine(bun.Play(s));
+        yield return StartCoroutine(charlie.Play(s));
         yield return new WaitForSeconds(speechInterval);
     }
 
     public IEnumerator PoeSay(string s)
     {
-        yield return StartCoroutine(poe.Play(s));
+        yield return StartCoroutine(alpha.Play(s));
         yield return new WaitForSeconds(speechInterval);
-    }
-
-
-    public IEnumerator CustomSay(string s, DialogueAnim custom)
-    {
-        yield return StartCoroutine(custom.Play(s));
-        yield return new WaitForSeconds(speechInterval);
-    }
-
-    private IEnumerator Play()
-    {
-        while (queue.Count > 0){
-            yield return StartCoroutine(queue[0]);
-            queue.RemoveAt(0);
-            yield return new WaitForEndOfFrame();
-        }
     }
 
     public bool QueueEmpty()

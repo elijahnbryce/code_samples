@@ -33,9 +33,9 @@ public class Sticker : MonoBehaviour
         StickAnim();
     }
 
-    private Tween stickerTween(Transform t, float d)
+    private Tween stickerTween(Transform target, float destination)
     {
-        Tween new_t = t.DOMoveY(d, duration)
+        Tween new_t = target.DOMoveY(destination, duration)
             .SetEase(Ease.InOutCubic)
             .Pause()
             .SetAutoKill(false)

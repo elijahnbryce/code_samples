@@ -4,14 +4,10 @@ using UnityEngine;
 
 public class obstacleBehavior : MonoBehaviour
 {
-    Vector3 grabOffset;
-    //bool isHeld = false;
-    //[SerializeField] GameObject theHand;
-    //[SerializeField] Transform testPos;
     public Vector3 spawnPoint;
     public Quaternion spawnRot;
 
-    private Transform spawnT;
+    private Transform spawnTransform;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float groundCheckRadius = 0.2f;
@@ -26,43 +22,45 @@ public class obstacleBehavior : MonoBehaviour
 
     void Start()
     {
-        //handControl = theHand.GetComponent<handController>();
-
         rb = GetComponent<Rigidbody2D>();
         isAwake = true;
         wasStatic = (rb.bodyType == RigidbodyType2D.Static);
         spawnPoint = rb.transform.position;
         spawnRot = rb.transform.rotation;
         boxCollider = GetComponent<BoxCollider2D>();
-
-        spawnT = transform;
+        spawnTransform = transform;
     }
 
-    public void SetGrabbed(Transform p, Transform l)
+    public void SetGrabbed(Transform hand, Transform setPoint)
     {
-        Physics.IgnoreLayerCollision(gameObject.layer, Physics.AllLayers, true);
+        // We want to avoid clipping while the hand is moving the object
+        // Set position and ignore collisions 
+
+        Physics2D.IgnoreLayerCollision(gameObject.layer, Physics.AllLayers, true);
         boxCollider.enabled = false;
 
         rb.isKinematic = true;
-        transform.position = l.position;
-        transform.SetParent(p);
+        transform.position = setPoint.position;
+        transform.SetParent(hand);
     }
 
     public void SetReleased()
     {
-        Physics.IgnoreLayerCollision(gameObject.layer, Physics.AllLayers, false);
+        // Return to normal physics
+    
+        Physics2D.IgnoreLayerCollision(gameObject.layer, Physics.AllLayers, false);
         boxCollider.enabled = true;
 
         if (doesNotFall) rb.bodyType = RigidbodyType2D.Static;
         rb.isKinematic = false;
 
-        transform.SetParent(spawnT.parent);
+        transform.SetParent(spawnTransform.parent);
     }
 
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        if (collision.gameObject.layer == groundLayer)
         {
             // Push out of ground if clipping
                 // Bottom
@@ -88,13 +86,13 @@ public class obstacleBehavior : MonoBehaviour
         }
     }
 
-    public bool CheckOnGround()
+    public bool IsGrounded()
     {
         return IsGrounded(groundCheck, groundCheckRadius, groundLayer);
     }
 
-    private bool IsGrounded(Transform t, float r, LayerMask l)
+    private bool IsGrounded(Transform checkPosition, float range, LayerMask layer)
     {
-        return Physics2D.OverlapCircle(t.position, r, l);
+        return Physics2D.OverlapCircle(checkPosition.position, range, layer);
     }
 }

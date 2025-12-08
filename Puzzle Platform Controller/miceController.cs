@@ -13,7 +13,6 @@ public class miceController : MonoBehaviour
     [SerializeField] public float jumpHeight = 5f;
     bool facingRight = true;
     public bool canMove = true;
-    //bool isGrounded = true;
     float horizontalMove = 0f;
 
     private Rigidbody2D rb;
@@ -46,13 +45,13 @@ public class miceController : MonoBehaviour
             anim.SetBool("Moving", true);
             if (walkSound.GetComponent<AudioSource>().isPlaying == false)
             {
-                //walkSound.GetComponent<AudioSource>().Play();
+                walkSound.GetComponent<AudioSource>().Play();
             }
-}
+        }
         else
         {
             anim.SetBool("Moving", false);
-            //walkSound.GetComponent<AudioSource>().Stop();
+            walkSound.GetComponent<AudioSource>().Stop();
         }
         //LOOK DIRECTION
         FlipSprite();
@@ -64,7 +63,7 @@ public class miceController : MonoBehaviour
             anim.SetTrigger("Jump");
             if (walkSound.GetComponent<AudioSource>().isPlaying == false)
             {
-                //jumpSound.GetComponent<AudioSource>().Play();
+                jumpSound.GetComponent<AudioSource>().Play();
             }
         }
 
@@ -88,16 +87,6 @@ public class miceController : MonoBehaviour
             Vector3 localScale = transform.localScale;
             localScale.x *= -1f;
             transform.localScale = localScale;
-        }
-    }
-
-    private void checkVert()
-    {
-        if (transform.position.y < verticalBound.position.y)
-        {
-            Debug.Log("Fell in the void");
-            Time.timeScale = 0;
-            //TODO: end game, freeze time, call game over screen, destroy game object
         }
     }
 }

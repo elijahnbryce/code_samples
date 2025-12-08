@@ -41,7 +41,8 @@ public class handController : MonoBehaviour
 
     private void MoveCheck()
     {
-        //MOVE
+        //MOVEMENT INPUTS
+
         horizontalMove = Input.GetAxisRaw("Horizontal1") * speed;
         verticalMove = Input.GetAxisRaw("Vertical1") * speed;
         rb.velocity = new Vector2(horizontalMove, verticalMove);
@@ -49,9 +50,13 @@ public class handController : MonoBehaviour
 
     private void GrabCheck()
     {
-        Debug.Log("stopped colliding");
+        // Pickup objects in ranged if our hand is empty
+
         if (Input.GetKey(KeyCode.Space) && grabbedObject == null)
         {
+            // Raycast circle range 
+            // Pickup the closest hit object
+            // Eearly break for none found
             Collider2D[] hit = Physics2D.OverlapCircleAll(rb.position, grabRange, targetLayer);
             if (hit.Length > 0) { return; }
 
@@ -69,34 +74,27 @@ public class handController : MonoBehaviour
             }
             PickupFixed(tempCollision);
         }
+
+        // Release held object
         else if (Input.GetKeyUp(KeyCode.Space) && grabbedObject != null)
         {
             ReleaseFixed();
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawWireSphere(rb.position, grabRange);
-    }
-
     private void PickupFixed(Collider2D collision)
     {
-        Debug.Log("the hand is picking it up");
+        // Grabbed objects should not interrupt the physics of the hand
         anim.SetBool("Grabbing", true);
-
         grabbedObject = collision.gameObject;
-
-        //gameObject.layer = LayerMask.NameToLayer("hand");
         Physics2D.IgnoreCollision(collision, myCollider, true);
         grabbedObject.GetComponent<obstacleBehavior>().SetGrabbed(transform, grabPoint);
     }
 
     private void ReleaseFixed()
     {
-        Debug.Log("the hand has released its claim");
+        // Return to normal physics
         anim.SetBool("Grabbing", false);
-
         Physics2D.IgnoreCollision(gameObject.GetComponent<Collider2D>(), myCollider, false);
         grabbedObject.GetComponent<obstacleBehavior>().SetReleased();
         grabbedObject = null;

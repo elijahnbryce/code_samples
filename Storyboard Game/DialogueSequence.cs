@@ -8,15 +8,16 @@ public class DialogueSequence : MonoBehaviour
 
     public enum Speaker
     {
-        Poe = 0,
-        Officer1 = 1,
-        Officer2 = 2
+        Alpha = 0,
+        Bravo = 1,
+        Charlie = 2
     }
 
     [System.Serializable] 
     public struct Dialogue
     {
-        public Speaker name; public string description;
+        public Speaker name; 
+        public string description;
     }
 
     [Header("Conversation")]
@@ -36,15 +37,16 @@ public class DialogueSequence : MonoBehaviour
 
     private void ParseAndSend(Dialogue msg)
     {
+        // Proc dialogue box based on speaker
         switch (msg.name)
         {
-            case Speaker.Poe:
+            case Speaker.Alpha:
                 dm.EnqueDiag(dm.PoeSay(msg.description));
                 break;
-            case Speaker.Officer1:
+            case Speaker.Bravo:
                 dm.EnqueDiag(dm.PawSay(msg.description)); 
                 break;
-            case Speaker.Officer2:
+            case Speaker.Charlie:
                 dm.EnqueDiag(dm.BunSay(msg.description));
                 break;
             default:

@@ -21,7 +21,7 @@ public class PanelHandle : MonoBehaviour
     [Header("UI")]
     [SerializeField] private GameObject theButton;
     [SerializeField] private TextMeshProUGUI puzzlePrompt;
-    private static SusHandler susH;
+    private static SusHandler suspisionHandler;
 
     [Header("Dialogue")]
     [SerializeField] private DialogueSequence sequence;
@@ -46,19 +46,10 @@ public class PanelHandle : MonoBehaviour
 
         inx = 0;
         ShowPanel(panels[inx]);
-        susH = SusHandler._Instance;
-        susH.Pause();
-        //theButton.SetActive(false);
+        suspisionHandler = SusHandler._Instance;
+        suspisionHandler.Pause();
     }
 
-    private void Update()
-    {
-        // Debugging
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            ChangePage();
-        }
-    }
 
     public void ChangePage(int change = 1)
     {
@@ -71,7 +62,6 @@ public class PanelHandle : MonoBehaviour
         if (inx == panels.Count - 1)
         {
             SceneManager.LoadScene(2);
-            //quitButton.SetActive(true);
         }
     }
 
@@ -85,9 +75,14 @@ public class PanelHandle : MonoBehaviour
 
     public IEnumerator SpeakWhenSpokenTo()
     {
-        Debug.Log(panels[inx].name + " " + dialogueSequences.Count);
+        // Play dialogue and connected puzzles 
         foreach (var seq in dialogueSequences)
         {
+            // One  dialogueSequence contains 
+            // a conversation and puzzle tag, 
+            // before carrying on, we want to 
+            // play all of the dialogue and 
+            // get "continue" input from player 
             wordPuzzle = seq.spawnsPuzzle;
             sequence.msgs = seq.dialogue;
             sequence.SendSequence();
@@ -105,13 +100,13 @@ public class PanelHandle : MonoBehaviour
         puzzleParent.gameObject.SetActive(wordPuzzle);
         puzzleParent.GetComponent<FormSentence>().Switch(wordPuzzle);
         puzzlePrompt.text = currentMsg;
-        susH.Resume();
+        suspisionHandler.Resume();
 
         // Wait for terminate
         yield return new WaitWhile(() => wordPuzzle);
         
-        susH.Pause();
-        susH.IncrSpd();
+        suspisionHandler.Pause();
+        suspisionHandler.IncrSpd();
     }
 
     public void ExitGame()
