@@ -1,83 +1,26 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a id="readme-top"></a>
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Don't forget to give the project a star!
-*** Thanks again! Now go create something AMAZING! :D
--->
-
-
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-[![project_license][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
-
-
-
-<!-- PROJECT LOGO -->
-<br />
-<div align="center">
-  <a href="https://github.com/elijahnbryce/code_samples">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
-
-<h3 align="center">project_title</h3>
-
-  <p align="center">
-    project_description
-    <br />
-    <a href="https://github.com/elijahnbryce/code_samples"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-  </p>
-</div>
-
 
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
   <a href="https://github.com/elijahnbryce/code_samples/tree/main/Storyboard%20Game">Dialogue System:</a>
   <p>
-    This dialogue system is a tool that I created upon request from the narrative designer in a group project for school to be able to provide dialogue in editor. This dialogue tool functions based on a queue of Coroutines and allows for modularity with custom callbacks to maintain future scalability and potential to integrate more events associated with dialogue. 
+    This tree defines a custom dialogue system in Unity that has transgressed through multiple game projects and evolved to allow more integrations.
   </p>
   <br />
+  * <a href="https://github.com/elijahnbryce/code_samples/blob/main/Storyboard%20Game/DialogueAnim.cs">Dialogue Anim:</a>
+    - Manages DOTween animation for dialogue textboxes.  
+  * <a href="https://github.com/elijahnbryce/code_samples/blob/main/Storyboard%20Game/DialogueSystem.cs">Dialogue System:</a>
+    - Operates a queue of messages sent through multiple textbox game objects 
+    - Scripts are dependent on this system to know when messages are complete
+  * <a href="https://github.com/elijahnbryce/code_samples/blob/main/Storyboard%20Game/DialogueSequence.cs">Dialogue Sequence:</a>
+    - Holder that parses and sends a list of dialogue as one instance of a conversation
+    - Communicates directly with the DialogueSystem
+  * <a href="https://github.com/elijahnbryce/code_samples/blob/main/Storyboard%20Game/ProcDiag.cs">Proc Diag:</a>
+    - Controls the complete displaying of a dialogue message
   <br />
-  <a href="https://github.com/elijahnbryce/code_samples/tree/main/Puzzle%20Platform%20Controller">Platformer Controllers</a>
-  <p>
-    These platformer controller scripts demonstrate manipulation of Unity physics layers and raycasting for smooth interactions between players and objects.
-  </p>
-  <br />
-  <br />
-  <a href="https://github.com/elijahnbryce/code_samples/blob/main/Maze%20Game/GameManager.cs">Game Manager</a>
-  <p>
-    The GameManger for a project required to handle multiple scenes and residual game state persistance upon scene reloading. 
-  </p>
-  <br />
-  <br />
-  <a href="https://github.com/elijahnbryce/code_samples/blob/main/Sticker.cs">Sticker Animation</a>
-  <p>
-    This script functions alongside the DOTween library to create a sticker peeling animation.
-  </p>
-  <br />
-  <br /><p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-<!-- LICENSE -->
-## License
-
-Distributed under the project_license. See `LICENSE.txt` for more information.
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- CONTACT -->
