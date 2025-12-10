@@ -10,14 +10,23 @@
   </p>
   <br />
   * <a href="https://github.com/elijahnbryce/code_samples/blob/main/Storyboard%20Game/DialogueAnim.cs">Dialogue Anim:</a>
+  <br />
     - Manages DOTween animation for dialogue textboxes.  
+    <br />
   * <a href="https://github.com/elijahnbryce/code_samples/blob/main/Storyboard%20Game/DialogueSystem.cs">Dialogue System:</a>
+    <br />
     - Operates a queue of messages sent through multiple textbox game objects 
+      <br />
     - Scripts are dependent on this system to know when messages are complete
+      <br />
   * <a href="https://github.com/elijahnbryce/code_samples/blob/main/Storyboard%20Game/DialogueSequence.cs">Dialogue Sequence:</a>
+    <br />
     - Holder that parses and sends a list of dialogue as one instance of a conversation
+      <br />
     - Communicates directly with the DialogueSystem
+      <br />
   * <a href="https://github.com/elijahnbryce/code_samples/blob/main/Storyboard%20Game/ProcDiag.cs">Proc Diag:</a>
+  <br />
     - Controls the complete displaying of a dialogue message
   <br />
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
